@@ -8,6 +8,7 @@ public class MachineModel {
 	 private CPU cpu = new CPU();
 	 private Memory memory = new Memory();
 	 private HaltCallback callback;
+	 private Code code = new Code();
 	 
 	 public MachineModel() {
 			this(() -> System.exit(0));
@@ -275,5 +276,11 @@ public class MachineModel {
 	}
 	public Instruction get(int i){
 		return INSTRUCTIONS.get(i);
+	}
+	public void setCode(int i, int op, int arg){
+		code.setCode(i,op,arg);
+	}
+	public Code getCode(){
+		return code;
 	}
 }
