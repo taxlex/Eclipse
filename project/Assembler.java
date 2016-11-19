@@ -15,19 +15,19 @@ public class Assembler {
 		try {
 
 	        Scanner sc = new Scanner(input);
-	        boolean datayesno = false;
-
+	      
+	        boolean change = false;
 	        while (sc.hasNextLine()) {
-	        	if(sc.nextLine().trim().equals("DATA")){
-	        		datayesno = true;
+	        	int i = 0;
+	        	String temp = sc.nextLine();
+	        	if(temp.equals("DATA")){
+	        		change = true;
+	        		i = 1;
 	        	}
-	        	if(datayesno == false){
-	        		code.add(sc.nextLine());
-	        	}
-	        	else if (datayesno == true){
-	        		data.add(sc.nextLine());
-	        	}
-	            
+	        	if(change == false) code.add(temp);
+	        	if(change == true && i == 0) data.add(temp);
+	        	
+	        	
 	        }
 	        sc.close();
 	    } 
@@ -38,20 +38,22 @@ public class Assembler {
 			String[] parts = ln.trim().split("\\s+");
 			if(parts.length == 2){
 				if(parts[1].startsWith("#")){
-					if(parts[0] == "JUMP"){
+					if(parts[0].equals("JUMP")){
+						parts[1] = parts[1].substring(1);
 						parts[0] = "JMPI";
 					}
-					else if(parts[0] == "JMPZ"){
+					else if(parts[0].equals("JMPZ")){
+						parts[1] = parts[1].substring(1);
 						parts[0] = "JMZI";
 					}
 					else{
-						parts[1].substring(1);
+						parts[1] = parts[1].substring(1);
 						parts[0] += "I";
 					}
 					
 				}
 				else if(parts[1].startsWith("&")){
-					parts[1].substring(1);
+					parts[1] = parts[1].substring(1);
 					parts[0] += "N";
 				}
 			}
