@@ -86,7 +86,7 @@ public class Assembler {
 	
 	public static void main(String[] args){
 		File in = new File("in.txt");
-		File out = new File("out.txt");
+		File out = new File("factorial.pexe");
 		assemble(in, out);
 	}
 

@@ -18,7 +18,7 @@ public class Code {
 	public String getText(int i){
 		String s1 = Integer.toHexString(code[2*i]).toUpperCase();
 		String s2 = Integer.toHexString(code[2*i + 1]).toUpperCase();
-		if((2*i + 1) < 0){
+		if((code[2*i + 1]) < 0){
 			s2 = "-" + Integer.toHexString(-code[2*i +1]).toUpperCase();
 		}
 		return s1 + " " + s2;

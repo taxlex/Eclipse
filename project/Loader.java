@@ -15,6 +15,7 @@ public class Loader {
 	        boolean incode = true;
 	        while(input.hasNextLine()){
 	        	String temp = input.nextLine();
+	        	//System.out.println(temp);
 	        	Scanner parser = new Scanner(temp);
 	        	int next = parser.nextInt(16);
 	        	if(incode == true && next == -1) incode = false;
