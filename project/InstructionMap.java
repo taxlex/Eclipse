@@ -48,6 +48,7 @@ public class InstructionMap {
 		indirectOK.add("SUB");
 		indirectOK.add("MUL");
 		indirectOK.add("DIV");
+		indirectOK.add("JUMP");
 		//add the other source code names that allow indirect forms
 		//(6 including LOD)
 		
@@ -84,6 +85,7 @@ public class InstructionMap {
 		opcode.put("NOT", 0x18);
 		opcode.put("CMPL", 0x19);
 		opcode.put("CMPZ", 0x1A);
+		opcode.put("JMPN", 0x1B);
 		opcode.put("HALT", 0x1F);
 		
 		//add all the other instructions given in Lab11 and the mapping to their

@@ -9,12 +9,21 @@ public class MachineModel {
 	 private Memory memory = new Memory();
 	 private HaltCallback callback;
 	 private Code code = new Code();
+	 private Job[] jobs = new Job[2];
+	 private Job currentJob;
 	 
-	 public MachineModel() {
+	public MachineModel() {
 			this(() -> System.exit(0));
 	 }
 	 public MachineModel(HaltCallback acallback){
 		 callback = acallback;
+		 jobs[0] = new Job();
+		 jobs[1] = new Job();
+		 currentJob = jobs[0];
+		 jobs[0].setStartcodeIndex(0);
+		 jobs[0].setStartmemoryIndex(0);
+		 jobs[1].setStartcodeIndex(Code.CODE_MAX/4);
+		 jobs[1].setStartmemoryIndex(Memory.DATA_SIZE/2);
 		 
 		 //INSTRUCTION_MAP entry for "NOP"
 		 INSTRUCTIONS.put(0x0, arg ->{
@@ -240,6 +249,11 @@ public class MachineModel {
 			 }
 			 cpu.incrementIP();
 		 });
+		 //INSTRUCTION_MAP entry for "JMPN"
+		 INSTRUCTIONS.put(0x1B, arg -> {
+				int target = memory.getData(cpu.getMemoryBase() + arg);
+				cpu.setInstructionPointer(currentJob.getStartCodeIndex()+target);
+			});
 		 //INSTRUCTION_MAP entry for "HALT"
 		 INSTRUCTIONS.put(0x1F, arg -> {
 				callback.halt();			
@@ -271,8 +285,17 @@ public class MachineModel {
 	public int getData(int index){
 		return memory.getData(index);
 	}
+	public int getChangedIndex(){
+		return memory.getChangedIndex();
+	}
 	public void setData(int index, int value){
 		memory.setData(index, value);
+	}
+	public States getCurrentState(){
+		return currentJob.getCurrentState();
+	}
+	public void setCurrentState(States currentState){
+		currentJob.setCurrentState(currentState);
 	}
 	public Instruction get(int i){
 		return INSTRUCTIONS.get(i);
@@ -282,5 +305,44 @@ public class MachineModel {
 	}
 	public Code getCode(){
 		return code;
+	}
+	public Job getCurrentJob() {
+			return currentJob;
+	}
+	public void clearJob(){
+		memory.clear(currentJob.getStartmemoryIndex(), currentJob.getStartmemoryIndex() + Memory.DATA_SIZE/2);
+		code.clear(currentJob.getStartCodeIndex(), currentJob.getStartCodeIndex() + currentJob.getCodeSize());
+		cpu.setAccumulator(0);;
+		cpu.setInstructionPointer(currentJob.getStartCodeIndex());
+		currentJob.reset();
+	}
+	public void step(){
+		try{
+			if(cpu.getInstructionPointer() <currentJob.getStartCodeIndex() || cpu.getInstructionPointer() >= currentJob.getStartCodeIndex() + currentJob.getCodeSize()){
+				throw new CodeAccessException();
+			}
+			else{
+				get(code.getOp(cpu.getInstructionPointer())).execute(code.getArg(cpu.getInstructionPointer()));
+			}
+			
+		}
+		catch(Exception e){
+			callback.halt();
+			throw e;
+		}
+	}
+	public void setJob(int i){
+		if(i != 0 || i != 1){
+			throw new IllegalArgumentException();
+		}
+		else{
+			currentJob.setCurrentAcc(cpu.getAccumulator());
+			currentJob.setCurrentIP(cpu.getInstructionPointer());
+			currentJob = jobs[i];
+			cpu.setAccumulator(currentJob.getCurrentIP());
+			cpu.setInstructionPointer(currentJob.getCurrentAcc());
+			cpu.setMemoryBase(currentJob.getStartmemoryIndex());
+			
+		}
 	}
 }

@@ -184,7 +184,7 @@ public class FilesManager {
 	void finalLoad_ReloadStep(Job job) {
 		view.clearJob();
 		String str = Loader.load(model, currentlyExecutingFile, 
-				job.getStartcodeIndex(), job.getStartmemoryIndex());
+				job.getStartCodeIndex(), job.getStartmemoryIndex());
 		try {
 			int len = Integer.parseInt(str);
 			job.setCodeSize(len);

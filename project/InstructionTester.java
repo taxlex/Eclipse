@@ -14,6 +14,7 @@ public class InstructionTester {
 	int[] dataCopy = new int[Memory.DATA_SIZE];
 	int accInit;
 	int ipInit;
+	int offsetinit;
 
 	@Before
 	public void setup() {
@@ -27,8 +28,12 @@ public class InstructionTester {
 			// not corrupt machine unexpectedly.
 			// 0 is at index 1024
 		}
-		accInit = 0;
-		ipInit = 0;
+		accInit = 30;
+		ipInit = 30;
+		offsetinit = 200;
+		machine.setAccumulator(accInit);
+		machine.setInstructionPointer(ipInit);
+		machine.setMemoryBase(offsetinit);
 	}
 
 
@@ -70,7 +75,7 @@ public class InstructionTester {
 		Instruction instr = machine.get(0x2);
 		machine.setAccumulator(27);
 		int arg = 12;
-			// should load -10240+120 into the accumulator
+			// should load data[offsetinit+12] into the accumulator
 		instr.execute(arg);
 		//Test machine is not changed
         assertArrayEquals(dataCopy, machine.getData());
@@ -78,7 +83,7 @@ public class InstructionTester {
         assertEquals("Program counter incremented", ipInit+1,
         		machine.getInstructionPointer());
         //Test accumulator modified
-        assertEquals("Accumulator changed", -10240+120,
+        assertEquals("Accumulator changed", dataCopy[offsetinit+12],
         		machine.getAccumulator());
 	}
 
@@ -87,8 +92,8 @@ public class InstructionTester {
 	public void testLODN() {
 		Instruction instr = machine.get(0x3);
 		machine.setAccumulator(-1);
-		int arg = 1028;
-		// should load data[-10240+10280] = data[40] = -10240 + 400
+		int arg = 1000;
+		// should load data[offsetinit+data[offsetinit+1000]]
 		// into the accumulator
 		instr.execute(arg);
 		//Test machine is not changed
@@ -97,7 +102,7 @@ public class InstructionTester {
         assertEquals("Program counter incremented", ipInit+1,
                 machine.getInstructionPointer());
         //Test accumulator modified
-        assertEquals("Accumulator changed", -10240+400,
+        assertEquals("Accumulator changed", dataCopy[offsetinit+dataCopy[offsetinit+1000]],
                 machine.getAccumulator());
 	}	
 	
@@ -107,7 +112,7 @@ public class InstructionTester {
 		Instruction instr = machine.get(0x4);
 		int arg = 12;
 		machine.setAccumulator(567);
-		dataCopy[12] = 567;
+		dataCopy[offsetinit + 12] = 567;
 		instr.execute(arg);
 		//Test machine is changed correctly
 		assertArrayEquals(dataCopy, machine.getData());
@@ -123,9 +128,9 @@ public class InstructionTester {
 	// Test whether store is correct with indirect addressing
 	public void testSTON() {
 		Instruction instr = machine.get(0x5);
-		int arg = 1127; // we know that address is -10240+11270 = 1030
+		int arg = 1000; // we know that address is data[offsetinit + 1000]
 		machine.setAccumulator(567);
-		dataCopy[1030] = 567;
+		dataCopy[offsetinit + dataCopy[offsetinit + 1000]] = 567;
 		instr.execute(arg);
 		//Test machine is changed correctly
 		assertArrayEquals(dataCopy, machine.getData());
@@ -144,11 +149,11 @@ public class InstructionTester {
 		Instruction instr = machine.get(0x6);
 		int arg = 260;  
 		machine.setAccumulator(200);
-		machine.setInstructionPointer(200);
+		machine.setInstructionPointer(300);
 		instr.execute(arg); 
 		// should have set the program counter to 40
 		assertArrayEquals(dataCopy, machine.getData()); 
-		assertEquals("Program counter was changed", 460,
+		assertEquals("Program counter was changed", 300+arg,
 				machine.getInstructionPointer());
 		assertEquals("Accumulator was not changed", 200,
 				machine.getAccumulator());
@@ -160,13 +165,13 @@ public class InstructionTester {
 	// address is in memory
 	public void testJUMP() {
 		Instruction instr = machine.get(0x7);
-		int arg = 1028; // the machine value is data[1028] = -10240+10280 = 40 
+		int arg = 1028; // the machine value is data[offsetinit+1028] 
 		machine.setAccumulator(200);
-		machine.setInstructionPointer(200);
+		machine.setInstructionPointer(300);
 		instr.execute(arg); 
 		// should have set the program counter to 40
 		assertArrayEquals(dataCopy, machine.getData()); 
-		assertEquals("Program counter was changed", 240,
+		assertEquals("Program counter was changed", 300+dataCopy[offsetinit+arg],
 				machine.getInstructionPointer());
 		assertEquals("Accumulator was not changed", 200,
 				machine.getAccumulator());
@@ -183,7 +188,7 @@ public class InstructionTester {
 		instr.execute(arg); 
 		// should have set the program counter to 40
 		assertArrayEquals(dataCopy, machine.getData()); 
-		assertEquals("Program counter was changed", 460,
+		assertEquals("Program counter was changed", 200+arg,
 				machine.getInstructionPointer());
 		assertEquals("Accumulator was not changed", 0,
 				machine.getAccumulator());
@@ -194,13 +199,13 @@ public class InstructionTester {
 	// address is in memory
 	public void testJMPZ() {
 		Instruction instr = machine.get(0x9);
-		int arg = 1028; // the machine value is data[1028] = -10240+10280 = 40 
+		int arg = 1028; // the machine value is data[offsetinit+1028] 
 		machine.setAccumulator(0);
-		machine.setInstructionPointer(200);
+		machine.setInstructionPointer(300);
 		instr.execute(arg); 
 		// should have set the program counter to 40
 		assertArrayEquals(dataCopy, machine.getData()); 
-		assertEquals("Program counter was changed", 240,
+		assertEquals("Program counter was changed", 300+dataCopy[offsetinit+arg],
 				machine.getInstructionPointer());
 		assertEquals("Accumulator was not changed", 0,
 				machine.getAccumulator());
@@ -259,14 +264,14 @@ public class InstructionTester {
 	// addressing is direct
 	public void testADD() {
 		Instruction instr = machine.get(0xB);
-		int arg = 12; // we know that memory value is -10240+120
+		int arg = 12; // we know that memory value is dataCopy[offsetinit+12]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
-		// should have added -10240+120 to accumulator
+		// should have added 200 + dataCopy[offsetinit+12] to accumulator
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200-10240+120,
+		assertEquals("Accumulator was changed", 200 + dataCopy[offsetinit+12],
 				machine.getAccumulator());
 	}
 
@@ -275,15 +280,15 @@ public class InstructionTester {
 	// addressing is indirect
 	public void testADDN() {
 		Instruction instr = machine.get(0xC);
-		int arg = 1028; // we know that address is -10240+10280 = 40
-		// and the memory value is data[40] = -10240+400 = -9840 
+		int arg = 1000; // we know that address is data[offsetinit + 1000]
+		// and the memory value is data[offsetinit + data[offsetinit + 1000]]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
 		// should have added -9840 to accumulator
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200-9840,
+		assertEquals("Accumulator was changed", 200+dataCopy[offsetinit + dataCopy[offsetinit + 1000]],
 				machine.getAccumulator());
 	}
 
@@ -308,14 +313,14 @@ public class InstructionTester {
 	// addressing is direct
 	public void testSUB() {
 		Instruction instr = machine.get(0xE);
-		int arg = 12; // we know that machine value is -10240+120
+		int arg = 12; // we know that machine value is dataCopy[offsetinit+12]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
 		// should have subtracted -10240+120 from accumulator
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200+10240-120,
+		assertEquals("Accumulator was changed", 200-dataCopy[offsetinit+12],
 				machine.getAccumulator());
 	}
 
@@ -324,15 +329,15 @@ public class InstructionTester {
 	// addressing is indirect
 	public void testSUBN() {
 		Instruction instr = machine.get(0xF);
-		int arg = 1127; // we know that address is -10240+11270 = 1030
-		// and the memory value is data[1030] = 60 
+		int arg = 1000; // we know that address is data[offsetinit+1000]
+		// and the memory value is data[offsetinit+data[offsetinit+1000]]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
-		// should have subtracted 60 from accumulator
+		// should have subtracted data[offsetinit+data[offsetinit+1000]] from accumulator
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200-60,
+		assertEquals("Accumulator was changed", 200-dataCopy[offsetinit+dataCopy[offsetinit+1000]],
 				machine.getAccumulator());
 	}
 
@@ -357,14 +362,14 @@ public class InstructionTester {
 	// addressing is direct
 	public void testMUL() {
 		Instruction instr = machine.get(0x11);
-		int arg = 12; // we know that machine value is -10240+120
+		int arg = 12; // we know that memory value is dataCopy[offsetinit+12]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
-		// should have multiplied accumulator by -10240+120 
+		// should have multiplied accumulator by dataCopy[offsetinit+12] 
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200*(-10240+120),
+		assertEquals("Accumulator was changed", 200*dataCopy[offsetinit+12],
 				machine.getAccumulator());
 	}
 
@@ -373,15 +378,15 @@ public class InstructionTester {
 	// addressing is indirect
 	public void testMULN() {
 		Instruction instr = machine.get(0x12);
-		int arg = 1127; // we know that address is -10240+11270 = 1030
-		// and the memory value is data[1030] = 60 
+		int arg = 1000; // we know that address is data[offsetinit+1000]
+		// and the memory value is data[offsetinit+data[offsetinit+1000]]
 		machine.setAccumulator(200);
 		instr.execute(arg); 
 		// should have multiplied to accumulator 60
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200*60,
+		assertEquals("Accumulator was changed", 200*dataCopy[offsetinit+dataCopy[offsetinit+1000]],
 				machine.getAccumulator());
 	}
 
@@ -406,14 +411,14 @@ public class InstructionTester {
 	// addressing is direct
 	public void testDIV() {
 		Instruction instr = machine.get(0x14);
-		int arg = 12; // we know that machine value is -2560+120
-		machine.setAccumulator(200);
+		int arg = 12; // we know that machine value is data[offsetinit + 12]
+		machine.setAccumulator(200000);
 		instr.execute(arg); 
-		// should have divided accumulator by -2560+120 
+		// should have divided accumulator by data[offsetinit + 12]
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200/(-2560+120),
+		assertEquals("Accumulator was changed", 200000/dataCopy[offsetinit + 12],
 				machine.getAccumulator());
 	}
 
@@ -422,15 +427,15 @@ public class InstructionTester {
 	// addressing is indirect
 	public void testDIVN() {
 		Instruction instr = machine.get(0x15);
-		int arg = 1127; // we know that address is -10240+11270 = 1030
-		// and the memory value is data[1030] = 60 
-		machine.setAccumulator(200);
+		int arg = 1000; // we know that address is data[offsetinit+1000]
+		// and the memory value is data[offsetinit+data[offsetinit+1000]]
+		machine.setAccumulator(200000);
 		instr.execute(arg); 
-		// should have divided to accumulator -2560+400
+		// should have divided to accumulator data[offsetinit+data[offsetinit+1000]]
 		assertArrayEquals(dataCopy, machine.getData()); 
 		assertEquals("Program counter was incremented", ipInit + 1,
 				machine.getInstructionPointer());
-		assertEquals("Accumulator was changed", 200/60,
+		assertEquals("Accumulator was changed", 200000/dataCopy[offsetinit+dataCopy[offsetinit+1000]],
 				machine.getAccumulator());
 	}
 	
@@ -448,7 +453,7 @@ public class InstructionTester {
 	// for division by 0 from machine
 	public void testDIVzero() {
 		Instruction instr = machine.get(0x14);
-		int arg = 1024; 
+		int arg = 1024-offsetinit; 
 		instr.execute(arg);
 	}
 
@@ -457,7 +462,7 @@ public class InstructionTester {
 	// for division by 0 from machine
 	public void testDIVNzero() {
 		Instruction instr = machine.get(0x15);
-		machine.setData(100, 1024);
+		machine.setData(100+offsetinit, 1024-offsetinit);
 		int arg = 100; 
 		instr.execute(arg);
 	}
@@ -704,7 +709,7 @@ public class InstructionTester {
 	// Check AND when accum pos mem equal to zero gives false
 	public void testANDaccGT0memEQ0() {
 		Instruction instr = machine.get(0x17);
-		int arg = 1024;
+		int arg = 1024-offsetinit;
 		machine.setAccumulator(10);
 		instr.execute(arg);
 		//Test machine is not changed
@@ -721,7 +726,7 @@ public class InstructionTester {
 	// Check AND when accum neg mem equal to zero gives false
 	public void testANDaccLT0memEQ0() {
 		Instruction instr = machine.get(0x17);
-		int arg = 1024;
+		int arg = 1024-offsetinit;
 		machine.setAccumulator(-10);
 		instr.execute(arg);
 		//Test machine is not changed
@@ -836,7 +841,7 @@ public class InstructionTester {
 	// Check CMPL when comparing equal to 0 gives false
 	public void testCMPLmemEQ0() {
 		Instruction instr = machine.get(0x19);
-		int arg = 1024;
+		int arg = 1024-offsetinit;
 		instr.execute(arg);
 		//Test machine is not changed
         assertArrayEquals(dataCopy, machine.getData()); 
@@ -884,7 +889,7 @@ public class InstructionTester {
 	// Check CMPZ when comparing equal to 0 gives true
 	public void testCMPZmemEQ0() {
 		Instruction instr = machine.get(0x1A);
-		int arg = 1024;
+		int arg = 1024 - offsetinit; // should be where data is 0
 		instr.execute(arg);
 		//Test machine is not changed
         assertArrayEquals(dataCopy, machine.getData()); 

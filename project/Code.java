@@ -27,4 +27,12 @@ public class Code {
 		code[2*i] = op;
 		code[2*i + 1] = arg;
 	}
+	public String getHex(int i){
+		String temp = Integer.toHexString(code[2*i]).toUpperCase() + " " +Integer.toHexString(code[2*i+1]).toUpperCase();
+		return temp;
+	}
+	public String getDecimal(int i){
+		String temp = InstructionMap.mnemonics.get(code[2*i]) + " " + code[2*i+1];
+		return temp;
+	}
 }

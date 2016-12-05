@@ -255,6 +255,10 @@ public class Assembler {
 						
 					}
 					else if(parts[1].startsWith("&")){
+						if(parts[0].equals("JUMP")){
+							parts[1] = parts[1].substring(1);
+							parts[0] = "JMPN";
+						}
 						parts[1] = parts[1].substring(1);
 						parts[0] += "N";
 					}
