@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.util.Observable;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -17,8 +18,8 @@ public class ViewsOrganizer extends Observable{
 	private MemoryViewPanel memoryViewPanel2;
 	private MemoryViewPanel memoryViewPanel3;
 	//private ControlPanel controlPanel;
-	//private ProcessorViewPanel processorPanel;
-	//private MenuBarBuilder menuBuilder;
+	private ProcessorViewPanel processorPanel;
+	private MenuBarBuilder menuBuilder;
 	private JFrame frame;
 	private FilesManager filesManager;
 	private Animator animator;
@@ -95,12 +96,18 @@ public class ViewsOrganizer extends Observable{
 		memoryViewPanel1 = new MemoryViewPanel(this, model, 0, 240);
 		memoryViewPanel2 = new MemoryViewPanel(this, model, 240, Memory.DATA_SIZE/2);
 		memoryViewPanel3 = new MemoryViewPanel(this, model, Memory.DATA_SIZE/2, Memory.DATA_SIZE);
-		//controlPanel = new ControlPanel(this);
-		//processorPanel = new ProcessorPanel(this,model);
-		//menuBuilder = new MenuBuilder(this);
+		processorPanel = new ProcessorViewPanel(this,model);
 		frame = new JFrame("Simulator");
+		frame.add(processorPanel.createProcessorDisplay(),BorderLayout.PAGE_START);
+		JMenuBar bar = new JMenuBar();
+		frame.setJMenuBar(bar);
+		menuBuilder = new MenuBarBuilder(this);
+		bar.add(menuBuilder.createFileMenu());
+		bar.add(menuBuilder.createExecuteMenu());
+		bar.add(menuBuilder.createJobsMenu());
+		//controlPanel = new ControlPanel(this);
 		Container content = frame.getContentPane();
-		content.setLayout(new BorderLayout(1,1));
+		content.setLayout(new BorderLayout(2,1));
 		content.setBackground(Color.BLACK);
 		frame.setSize(1200, 600);
 		JPanel center = new JPanel();
@@ -186,8 +193,7 @@ public class ViewsOrganizer extends Observable{
 			public void run() {
 				ViewsOrganizer organizer = new ViewsOrganizer();
 				MachineModel model = new MachineModel(
-				//() 
-				//-> organizer.setCurrentState(States.PROGRAM_HALTED)
+						() -> organizer.setCurrentStates(States.PROGRAM_HALTED)
 				);
 				organizer.setModel(model);
 				organizer.createAndShowGUI();

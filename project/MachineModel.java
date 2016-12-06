@@ -58,7 +58,7 @@ public class MachineModel {
 		 
 		//INSTRUCTION_MAP entry for "STON"
 		 INSTRUCTIONS.put(0x5, arg ->{
-			 int arg1 = memory.getData(arg);
+			 int arg1 = memory.getData(cpu.getMemoryBase() +arg);
 			 memory.setData( cpu.getMemoryBase() + arg1 , cpu.getAccumulator());
 	         cpu.incrementIP();
 		 });

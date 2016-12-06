@@ -103,7 +103,6 @@ public class CodeViewPanel implements Observer{
 		if(scroller != null && code != null && model!= null) {
 			JScrollBar bar= scroller.getVerticalScrollBar();
 			int pc = model.getInstructionPointer();
-			//if(pc < Code.CODE_MAX && codeHex[pc] != null) { << CHANGE THIS LINE TO THE NEXT LINE
 			if(pc > 0 && pc < Code.CODE_MAX && codeHex[pc] != null) {
 				Rectangle bounds = codeHex[pc].getBounds();
 				bar.setValue(Math.max(0, bounds.y - 15*bounds.height));
