@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.GridLayout;
+import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
@@ -8,7 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-public class ControlPanel {
+public class ControlPanel implements Observer{
 	private ViewsOrganizer view;
 	private JButton stepButton = new JButton("Step");
 	private JButton clearButton = new JButton("Clear");
@@ -17,7 +18,7 @@ public class ControlPanel {
 	
 	public ControlPanel(ViewsOrganizer gui) {
 		view = gui;
-		gui.addObserver((Observer) this);
+		gui.addObserver(this);
 	}
 	public JComponent createControlDisplay(){
 		JPanel panel = new JPanel();
@@ -39,7 +40,8 @@ public class ControlPanel {
 		return panel;
 		
 	}
-	public void update(){
+	@Override
+	public void update(Observable arg0, Object arg1){
 		runButton.setEnabled(view.getCurrentState().getRunPauseActive());
 		reloadButton.setEnabled(view.getCurrentState().getReloadActive());
 		clearButton.setEnabled(view.getCurrentState().getClearActive());

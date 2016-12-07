@@ -45,8 +45,8 @@ public enum States {
 			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[RELOAD] = true;
 			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[RUN] = true;
 			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[RUNNING] = false;
-			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[STEP] = false;
-			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[CHANGE_JOB] = false;
+			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[STEP] = true;
+			PROGRAM_LOADED_NOT_AUTOSTEPPING.states[CHANGE_JOB] = true;
 		}		
 	};
 	private static final int ASSEMBLE = 0;

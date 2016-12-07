@@ -18,13 +18,13 @@ public class Animator {
 	}
 	public void toggleAutoStep(){
 		if(autoStepOn == false) autoStepOn = true;
-		if(autoStepOn == true) autoStepOn = false;
+		else if(autoStepOn == true) autoStepOn = false;
 	}
 	public void setPeriod(int period){
 		timer.setDelay(period);
 	}
 	public void start() {
-		timer = new Timer(TICK, e -> {if(autoStepOn) view.step();});
+		timer = new Timer(TICK, e -> {if(autoStepOn){view.step();}});
 		timer.start();
 	}
 }

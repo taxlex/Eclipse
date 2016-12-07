@@ -332,7 +332,7 @@ public class MachineModel {
 		}
 	}
 	public void setJob(int i){
-		if(i != 0 || i != 1){
+		if(i != 0 && i != 1){
 			throw new IllegalArgumentException();
 		}
 		else{

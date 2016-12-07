@@ -23,7 +23,6 @@ public class MenuBarBuilder implements Observer {
 		gui.addObserver(this);
 	}
 	public JMenu createFileMenu(){
-		System.out.println("aaaa");
 		JMenu menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 		assemble.setMnemonic(KeyEvent.VK_A);
