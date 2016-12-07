@@ -57,7 +57,8 @@ public class Assembler {
 	        }
 			//fin is used to decide up to where the for loop should go up to
 			int fin = 0;
-			if((lineNum == 0 && returnValue.length() == 0)|| lineNum > cd.size()){
+			if((returnValue.length() == 0)|| lineNum > cd.size()){
+				System.out.println(lineNum);
 				fin = cd.size();
 			}
 			else if(lineNum < cd.size()){
@@ -176,7 +177,9 @@ public class Assembler {
 			if(fin == cd.size() && lineNum > cd.size()){
 				fin = lineNum - fin -1;
 				for(int i = 0; i < fin; i++){
+					System.out.println(i);
 					String[] parts = dt.get(i).trim().split("\\s+");
+					if(parts[0].equals("")) break;
 					if(parts.length != 2){
 						returnValue = "Error: line " + (i+2+cd.size()) + " does not have two arguments";
 						break;
@@ -222,6 +225,7 @@ public class Assembler {
 		        while (sc.hasNextLine()) {
 		        	int i = 0;
 		        	String temp = sc.nextLine();
+		        	if(temp.trim().isEmpty()) break;
 		        	if(temp.equals("DATA")){
 		        		change = true;
 		        		i = 1;
@@ -259,8 +263,11 @@ public class Assembler {
 							parts[1] = parts[1].substring(1);
 							parts[0] = "JMPN";
 						}
-						parts[1] = parts[1].substring(1);
-						parts[0] += "N";
+						else{
+							parts[1] = parts[1].substring(1);
+							parts[0] += "N";
+						}
+						
 					}
 				}
 				int opcode = InstructionMap.opcode.get(parts[0]);
