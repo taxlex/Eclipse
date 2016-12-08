@@ -339,8 +339,8 @@ public class MachineModel {
 			currentJob.setCurrentAcc(cpu.getAccumulator());
 			currentJob.setCurrentIP(cpu.getInstructionPointer());
 			currentJob = jobs[i];
-			cpu.setAccumulator(currentJob.getCurrentIP());
-			cpu.setInstructionPointer(currentJob.getCurrentAcc());
+			cpu.setAccumulator(currentJob.getCurrentAcc());
+			cpu.setInstructionPointer(currentJob.getCurrentIP());
 			cpu.setMemoryBase(currentJob.getStartmemoryIndex());
 			
 		}

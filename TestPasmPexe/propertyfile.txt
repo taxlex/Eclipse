@@ -1,0 +1,4 @@
+#File locations
+#Thu Dec 08 12:27:49 EST 2016
+ExecutableDirectory=/home/lex/Documents/eclipse_cs140/cs140/
+SourceDirectory=/home/lex/Documents/eclipse_cs140/cs140/

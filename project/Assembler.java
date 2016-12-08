@@ -58,7 +58,6 @@ public class Assembler {
 			//fin is used to decide up to where the for loop should go up to
 			int fin = 0;
 			if((returnValue.length() == 0)|| lineNum > cd.size()){
-				System.out.println(lineNum);
 				fin = cd.size();
 			}
 			else if(lineNum < cd.size()){
@@ -301,10 +300,15 @@ public class Assembler {
 	
 	
 	
-	public static void main(String[] args){
-		File in = new File("in.txt");
-		File out = new File("factorial.pexe");
-		System.out.println(assemble(in, out));
+	public static void main(String[] args) {
+		for (int i = 3; i <= 24; i++) {
+			String s = "";
+			if (i < 10) {
+				s += "0";
+			}
+			s += i + "e";
+			System.out.println(s + "    " + assemble(new File(s + ".pasm"), new File(s + ".pexe")));
+		}
 	}
 
 }

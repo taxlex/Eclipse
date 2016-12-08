@@ -40,16 +40,16 @@ public class ViewsOrganizer extends Observable{
 				JOptionPane.showMessageDialog(frame,"Illegal access to code from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (ArrayIndexOutOfBoundsException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Array index out of bounds exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (NullPointerException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Null pointer exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (IllegalArgumentException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Illegal argument exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (DivideByZeroException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Divide by ero exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			setChanged();
 			notifyObservers();
@@ -64,16 +64,16 @@ public class ViewsOrganizer extends Observable{
 				JOptionPane.showMessageDialog(frame,"Illegal access to code from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (ArrayIndexOutOfBoundsException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Array index out of bounds exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (NullPointerException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Null pointer exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (IllegalArgumentException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Illegal argument exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 			catch (DivideByZeroException e) {
-				JOptionPane.showMessageDialog(frame,"Illegal access to data from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame,"Divide by zero exception from line " + model.getInstructionPointer() + "\n"+ "Exception message: " + e.getMessage(), "Run time error", JOptionPane.OK_OPTION);
 			}
 		}
 		setChanged();
@@ -119,7 +119,6 @@ public class ViewsOrganizer extends Observable{
 		center.add(memoryViewPanel3.createMemoryDisplay());
 		frame.add(center, BorderLayout.CENTER);
 		frame.add(controlPanel.createControlDisplay(),BorderLayout.PAGE_END);
-		//**Return here for other GUI component
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(WindowListenerFactory.windowClosingFactory(e -> exit()));
 		model.setCurrentState(States.NOTHING_LOADED);
@@ -127,7 +126,6 @@ public class ViewsOrganizer extends Observable{
 		model.getCurrentState().enter();
 		setChanged();
 		notifyObservers();
-		// return HERE for other setup details
 		frame.setVisible(true);
 	}
 	public States getCurrentState(){
